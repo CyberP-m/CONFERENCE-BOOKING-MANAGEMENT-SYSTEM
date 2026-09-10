@@ -184,7 +184,6 @@
     <nav class="primary" id="nav"></nav>
     <div class="sidebar-foot">
       <button id="newBookingBtn">+ New booking</button>
-      <div class="hint">Shared register, backed by a real database — every coordinator sees the same live data.</div>
     </div>
     <div class="authed-as" id="authedAs"></div>
   </aside>
@@ -206,18 +205,10 @@ const IMAGES = {
 };
 </script>
 <script>
-/* =====================================================================
-   SETUP — fill these in once you've created your Supabase project.
-   Dashboard -> Project settings -> API -> "Project URL" and "anon public" key.
-   These two values are meant to be public (they're safe to ship in a
-   front-end file) — real protection comes from the database policies
-   in schema.sql, not from hiding this key.
-   ===================================================================== */
+
 const SUPABASE_URL = 'https://jrbdqfvsveklrxdjabwt.supabase.co';
 
 const SUPABASE_ANON_KEY = 'sb_publishable_3xQL4gHD_veW5wN1ULtFug_9Q1FY5fU';
-
-/* ===================================================================== */
 
 const sb = SUPABASE_URL.startsWith('http')
   ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
