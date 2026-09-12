@@ -1149,7 +1149,14 @@ async function loadAndRenderUsersPanel(){
 async function callAdminUsersFunction(action, payload){
   try{
     const { data, error } = await sb.functions.invoke('admin-users', { body: { action, ...payload } });
-    if(error) return { ok:false, message: error.message || 'The admin-users function returned an error.' };
+    if(error){
+      let detail = error.message || 'The admin-users function returned an error.';
+      // supabase-js hides the actual response body behind error.context — read it for the real reason.
+      if(error.context && typeof error.context.json === 'function'){
+        try{ const body = await error.context.clone().json(); if(body && body.error) detail = body.error; } catch(e){}
+      }
+      return { ok:false, message: detail };
+    }
     if(data && data.error) return { ok:false, message: data.error };
     return { ok:true, data };
   } catch(e){
@@ -1158,7 +1165,10 @@ async function callAdminUsersFunction(action, payload){
 }
 function showAdminFunctionHint(message){
   const hint = document.getElementById('usersHint');
-  const text = `${message} — this needs the "admin-users" Edge Function deployed once (see supabase/functions/admin-users in your project files, or ADMIN_SETUP.md for the two-command deploy).`;
+  const looksUndeployed = /non-2xx|not found|failed to fetch|404|could not reach/i.test(message||'');
+  const text = looksUndeployed
+    ? `${message} — this needs the "admin-users" Edge Function deployed once (see supabase/functions/admin-users in your project files, or ADMIN_SETUP.md for the two-command deploy).`
+    : message;
   if(hint) hint.textContent = text; else alert(text);
 }
 
